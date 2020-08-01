@@ -1,22 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
+import wiki from './wiki.png';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={wiki} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+        WikiSource
         </p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="https://en.wikipedia.org/wiki/Wikipedia:Multiyear_ranking_of_most_viewed_pages"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Most popular Wikipedia articles
         </a>
       </header>
     </div>

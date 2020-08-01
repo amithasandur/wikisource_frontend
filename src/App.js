@@ -10,6 +10,7 @@ function App() {
         <p>
         WikiSource
         </p>
+        <input type="text" className="input" placeholder="Search..." />
         <a
           className="App-link"
           href="https://en.wikipedia.org/wiki/Wikipedia:Multiyear_ranking_of_most_viewed_pages"

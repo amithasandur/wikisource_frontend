@@ -1,5 +1,6 @@
 
 import React from 'react';
+<<<<<<< HEAD
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import InputBase from '@material-ui/core/InputBase';
@@ -74,6 +75,34 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DisableElevation() {
     const classes = useStyles();
+=======
+import wiki from './wiki.png';
+import './App.css';
+import Button from '@material-ui/core/Button';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={wiki} className="App-logo" alt="logo" />
+        <p>
+        WikiSource
+        </p>
+        <input type="text" className="input" placeholder="Search..." />
+        <Button variant="contained" color="primary"> Search </Button>
+        <a
+          className="App-link"
+          href="https://en.wikipedia.org/wiki/Wikipedia:Multiyear_ranking_of_most_viewed_pages"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Most popular Wikipedia articles
+        </a>
+      </header>
+    </div>
+  );
+}
+>>>>>>> bb8659773c13a397a01e48f8d89a9b30530377fd
 
     return (
         <div>

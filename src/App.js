@@ -1,6 +1,5 @@
 
 import React from 'react';
-<<<<<<< HEAD
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import InputBase from '@material-ui/core/InputBase';
@@ -9,6 +8,7 @@ import CustomPaginationActionsTable from './myTable';
 import ThreeColTable from "./my3RowTable";
 import FiveColTable from "./my5rowtable";
 import FourColTable from "./my4rowtable";
+//a
 const useStyles = makeStyles((theme) => ({
     grow: {
         flexGrow: 1,
@@ -75,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DisableElevation() {
     const classes = useStyles();
-=======
 import wiki from './wiki.png';
 import './App.css';
 import Button from '@material-ui/core/Button';

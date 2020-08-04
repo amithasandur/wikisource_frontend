@@ -11,8 +11,13 @@ class App extends React.Component {
 		super(props);
 		this.state = {
 			value: 'Enter Article Name',
-			value2: 'Enter Article Name',
-			txt: '',
+			articleDelete: 'Enter Article Name',
+			articleInsert: 'Enter Article Name',
+			url: '',
+			name: '',
+			number: 0,
+			newUrl: '',
+			newName: '',
 			articleArray: [],
 			bookarray: [],
 			sciArray: [],
@@ -20,6 +25,9 @@ class App extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChangeDelete = this.handleChangeDelete.bind(this);
+		this.handleDelete = this.handleDelete.bind(this);
+		this.handleChangeInsert = this.handleChangeInsert.bind(this);
+		this.handleInsert = this.handleInsert.bind(this);
 	}
 
 	handleChange(event) {
@@ -27,7 +35,10 @@ class App extends React.Component {
 	}
 
 	handleChangeDelete(event) {
-		this.setState({ value2: event.target.value2 });
+		this.setState({ articleDelete: event.target.value });
+	}
+	handleChangeInsert(event) {
+		this.setState({ articleInsert: event.target.value });
 	}
 	//done
 	async handleSubmit(event) {
@@ -35,7 +46,11 @@ class App extends React.Component {
 		var resp = await axios.get(
 			`http://127.0.0.1:5000//wikiarticles/${this.state.value}`
 		);
-		this.setState({ ...this.state, txt: resp.data.data[0].url });
+		this.setState({
+			...this.state,
+			url: resp.data.data[0].url,
+			name: resp.data.data[0].name,
+		});
 	}
 	//todo
 	async handleClick(event) {
@@ -45,11 +60,13 @@ class App extends React.Component {
 		});
 	}
 	async handleDelete(event) {
-		await axios.get(
-			`http://127.0.0.1:5000//delArticle/${this.state.value}`
+		event.preventDefault();
+		await axios.delete(
+			`http://127.0.0.1:5000//delArticle/${this.state.articleDelete}`
 		);
-		console.log('Hello');
+		console.log(this.state.articleDelete);
 	}
+	/////////////////////////////////
 	async handleGetBooks(event) {
 		var resp = await axios.get(
 			`http://127.0.0.1:5000//books/${this.state.value}`
@@ -58,12 +75,19 @@ class App extends React.Component {
 	}
 	async handleGetPapers(event) {
 		var resp = await axios.get(
-			`http://127.0.0.1:5000//papers/${this.state.value}`
+			`http://127.0.0.1:5000//$this.state./${this.state.value}`
 		);
 		this.setstate({ ...this.state, sciArray: resp.data });
 	}
 	async handleGetNumSources(event) {}
+	async UpdateArticleName(event) {}
 
+	async handleInsert(event) {
+		let body = {
+			url: this.state.articleInsert,
+		};
+		await axios.post(`http://127.0.0.1:5000//insert`, body);
+	}
 	render() {
 		return (
 			<div className="App">
@@ -73,7 +97,7 @@ class App extends React.Component {
 
 					<form onSubmit={this.handleSubmit}>
 						<label>
-							Name:
+							Select Article:
 							<input
 								type="text"
 								value={this.state.value}
@@ -84,16 +108,27 @@ class App extends React.Component {
 					</form>
 					<form onSubmit={this.handleDelete}>
 						<label>
-							Name:
+							Delete Article:
 							<input
 								type="text"
-								value={this.state.value2}
+								value={this.state.articleDelete}
 								onChange={this.handleChangeDelete}
 							/>
 						</label>
 						<input type="submit" value="Delete" />
 					</form>
-					<p>{this.state.txt}</p>
+					<form onSubmit={this.handleInsert}>
+						<label>
+							Insert Article:
+							<input
+								type="text"
+								value={this.state.articleInsert}
+								onChange={this.handleChangeInsert}
+							/>
+						</label>
+						<input type="submit" value="Insert" />
+					</form>
+					<p>Selected Article: {this.state.url}</p>
 					<Button
 						variant="contained"
 						color="primary"
@@ -102,12 +137,12 @@ class App extends React.Component {
 						{' '}
 						Show Articles{' '}
 					</Button>
-					<ol>
+					<ul>
 						Available Articles:
 						{this.state.articleArray.map((article) => (
 							<li key={article.name}>{article.url}</li>
 						))}
-					</ol>
+					</ul>
 					<a
 						className="App-link"
 						href="https://en.wikipedia.org/wiki/Wikipedia:Multiyear_ranking_of_most_viewed_pages"

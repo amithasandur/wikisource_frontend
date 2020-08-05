@@ -14,13 +14,15 @@ class App extends React.Component {
 			articleDelete: 'Enter Article Name',
 			articleInsert: 'Enter Article Name',
 			advancedInsert: 'Enter ISBN',
-			similartiyRating: '',
+			similarityRating: '',
 			url: '',
 			name: '',
 			number: 0,
 			newUrl: '',
 			newName: '',
 			articleArray: [],
+			queryOneData: [],
+			queryTwoData: [],
 			extArray: [],
 			bookArray: [],
 			sciArray: [],
@@ -37,6 +39,8 @@ class App extends React.Component {
 		this.getScipapers = this.getScipapers.bind(this);
 		this.handleChangeAdvanced = this.handleChangeAdvanced.bind(this);
 		this.handleAdvanced = this.handleAdvanced.bind(this);
+
+		this.queryTwo = this.queryTwo.bind(this);
 	}
 
 	handleChange(event) {
@@ -109,16 +113,23 @@ class App extends React.Component {
 		};
 		await axios.post(`http://127.0.0.1:5000//insert`, body);
 	}
-	//todo
+
 	async handleAdvanced(event) {
 		event.preventDefault();
-		console.log(this.state.name);
-		console.log(this.state.ISBN);
 		var resp = await axios.get(
 			`http://127.0.0.1:5000//afunction/${this.state.name}/${this.state.advancedInsert}`
 		);
-		this.setState({ ...this.state, similarityRating: resp.data });
+		this.setState({ ...this.state, similarityRating: resp.data }, () => {
+			console.log(this.state.similarityRating);
+		});
 		console.log(resp.data);
+	}
+
+	async queryTwo(event) {
+		event.preventDefault();
+		var resp = await axios.get(`http://127.0.0.1:5000//query2`);
+		this.setState({ ...this.state, queryTwoData: resp.data.data });
+		console.log(this.state.queryTwoData);
 	}
 	render() {
 		return (
@@ -185,6 +196,22 @@ class App extends React.Component {
 						</label>
 						<input type="submit" value="Submit" />
 					</form>
+					<p>
+						Similarity Rating:{' '}
+						{parseFloat(this.state.similarityRating) > 0.19 &&
+							'Very Similar Rating:  ' +
+								this.state.similarityRating}
+						{parseFloat(this.state.similarityRating) > 0.17 &&
+							parseFloat(this.state.similarityRating) < 0.19 &&
+							'Slightly similar Rating: ' +
+								this.state.similarityRating}
+						{parseFloat(this.state.similarityRating) > 0.13 &&
+							parseFloat(this.state.similarityRating) < 0.17 &&
+							'Not very similar Rating: ' +
+								this.state.similarityRating}
+						{parseFloat(this.state.similarityRating) < 0.13 &&
+							'Unrelated Rating : ' + this.state.similarityRating}
+					</p>
 					<Button
 						variant="contained"
 						color="primary"
@@ -240,6 +267,26 @@ class App extends React.Component {
 					>
 						Most popular Wikipedia articles
 					</a>
+
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={this.queryTwo}
+					>
+						{' '}
+						Query Two{' '}
+					</Button>
+					<ul>
+						Publishers with multiple citations:
+						{this.state.queryTwoData.map((q2) => (
+							<li key={q2.title}>
+								{'Title: ' +
+									q2.title +
+									' ||Publisher: ' +
+									q2.publisher}
+							</li>
+						))}
+					</ul>
 				</div>
 			</div>
 		);

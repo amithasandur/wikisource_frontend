@@ -13,14 +13,18 @@ class App extends React.Component {
 			value: 'Enter Article Name',
 			articleDelete: 'Enter Article Name',
 			articleInsert: 'Enter Article Name',
+			advancedInsert: 'Enter ISBN',
+			similartiyRating: '',
 			url: '',
 			name: '',
 			number: 0,
 			newUrl: '',
 			newName: '',
 			articleArray: [],
-			bookarray: [],
+			extArray: [],
+			bookArray: [],
 			sciArray: [],
+			ISBN: '',
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,6 +32,11 @@ class App extends React.Component {
 		this.handleDelete = this.handleDelete.bind(this);
 		this.handleChangeInsert = this.handleChangeInsert.bind(this);
 		this.handleInsert = this.handleInsert.bind(this);
+		this.getBooks = this.getBooks.bind(this);
+		this.getExtarticles = this.getExtarticles.bind(this);
+		this.getScipapers = this.getScipapers.bind(this);
+		this.handleChangeAdvanced = this.handleChangeAdvanced.bind(this);
+		this.handleAdvanced = this.handleAdvanced.bind(this);
 	}
 
 	handleChange(event) {
@@ -40,6 +49,9 @@ class App extends React.Component {
 	handleChangeInsert(event) {
 		this.setState({ articleInsert: event.target.value });
 	}
+	handleChangeAdvanced(event) {
+		this.setState({ advancedInsert: event.target.value });
+	}
 	//done
 	async handleSubmit(event) {
 		event.preventDefault();
@@ -51,8 +63,8 @@ class App extends React.Component {
 			url: resp.data.data[0].url,
 			name: resp.data.data[0].name,
 		});
+		console.log(resp.data);
 	}
-	//todo
 	async handleClick(event) {
 		var resp = await axios.get('http://127.0.0.1:5000/select');
 		this.setState({ ...this.state, articleArray: resp.data.data }, () => {
@@ -66,21 +78,30 @@ class App extends React.Component {
 		);
 		console.log(this.state.articleDelete);
 	}
-	/////////////////////////////////
-	async handleGetBooks(event) {
+
+	async getBooks(event) {
 		var resp = await axios.get(
 			`http://127.0.0.1:5000//books/${this.state.value}`
 		);
-		this.setstate({ ...this.state, bookArray: resp.data });
+		this.setState({ ...this.state, bookArray: resp.data.data });
+		console.log(resp.data);
 	}
-	async handleGetPapers(event) {
+
+	async getScipapers(event) {
 		var resp = await axios.get(
-			`http://127.0.0.1:5000//$this.state./${this.state.value}`
+			`http://127.0.0.1:5000//scipapers/${this.state.value}`
 		);
-		this.setstate({ ...this.state, sciArray: resp.data });
+		this.setState({ ...this.state, sciArray: resp.data.data });
+		console.log(this.state.sciArray);
 	}
-	async handleGetNumSources(event) {}
-	async UpdateArticleName(event) {}
+
+	async getExtarticles(event) {
+		var resp = await axios.get(
+			`http://127.0.0.1:5000//extarticles/${this.state.value}`
+		);
+		this.setState({ ...this.state, extArray: resp.data.data });
+		console.log(resp.data.data);
+	}
 
 	async handleInsert(event) {
 		let body = {
@@ -88,13 +109,37 @@ class App extends React.Component {
 		};
 		await axios.post(`http://127.0.0.1:5000//insert`, body);
 	}
+	//todo
+	async handleAdvanced(event) {
+		event.preventDefault();
+		console.log(this.state.name);
+		console.log(this.state.ISBN);
+		var resp = await axios.get(
+			`http://127.0.0.1:5000//afunction/${this.state.name}/${this.state.advancedInsert}`
+		);
+		this.setState({ ...this.state, similarityRating: resp.data });
+		console.log(resp.data);
+	}
 	render() {
 		return (
 			<div className="App">
 				<div className="App-header">
 					<img src={wiki} className="App-logo" alt="logo" />
 					<p>WikiSource</p>
-
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={() => this.handleClick()}
+					>
+						{' '}
+						Show Articles{' '}
+					</Button>
+					<ul>
+						Available Articles:
+						{this.state.articleArray.map((article) => (
+							<li key={article.name}>{article.url}</li>
+						))}
+					</ul>
 					<form onSubmit={this.handleSubmit}>
 						<label>
 							Select Article:
@@ -129,18 +174,62 @@ class App extends React.Component {
 						<input type="submit" value="Insert" />
 					</form>
 					<p>Selected Article: {this.state.url}</p>
+					<form onSubmit={this.handleAdvanced}>
+						<label>
+							Enter ISBN:
+							<input
+								type="text"
+								value={this.state.advancedInsert}
+								onChange={this.handleChangeAdvanced}
+							/>
+						</label>
+						<input type="submit" value="Submit" />
+					</form>
 					<Button
 						variant="contained"
 						color="primary"
-						onClick={() => this.handleClick()}
+						onClick={this.getBooks}
 					>
 						{' '}
-						Show Articles{' '}
+						Get Books{' '}
 					</Button>
 					<ul>
-						Available Articles:
-						{this.state.articleArray.map((article) => (
-							<li key={article.name}>{article.url}</li>
+						Cited Books:
+						{this.state.bookArray.map((book) => (
+							<li key={book.isbn}>
+								{'Book Title: ' +
+									book.title +
+									' ISBN: ' +
+									book.isbn}
+							</li>
+						))}
+					</ul>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={this.getScipapers}
+					>
+						{' '}
+						Get Scientific Papers{' '}
+					</Button>
+					<ul>
+						Cited Scientific Papers:
+						{this.state.sciArray.map((paper) => (
+							<li key={paper.title}>{paper.title}</li>
+						))}
+					</ul>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={this.getExtarticles}
+					>
+						{' '}
+						Get External Articles{' '}
+					</Button>
+					<ul>
+						Articles:
+						{this.state.extArray.map((art) => (
+							<li key={art.articleurl}>{art.articleurl}</li>
 						))}
 					</ul>
 					<a
